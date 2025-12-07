@@ -11,8 +11,8 @@ import java.text.ParseException;
 
 public class TestReservationManager {
 
-    static DatabaseConnection databaseConnection;
-    static Connection connection;
+    static DatabaseConnection databaseConnection = new DatabaseConnection("root","","org.h2.Driver","jdbc:h2:mem:test");
+    static Connection connection = databaseConnection.connect();
 
 
 
@@ -20,8 +20,6 @@ public class TestReservationManager {
     // Integration Test Cancel Reservation
     @Test
     public void testIntegrationCancelReservation() throws ParseException {
-        databaseConnection = new DatabaseConnection("root","","org.h2.Driver","jdbc:h2:mem:test");
-        connection = databaseConnection.connect();
         databaseConnection.createDb(connection);
         // insert Parking
         Prototype prototype = new Prototype();

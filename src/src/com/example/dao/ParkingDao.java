@@ -5,11 +5,13 @@ import com.example.entity.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ParkingDao {
 
     private Connection conn;
-
+    private static final Logger LOGGER = Logger.getLogger(ParkingDao.class.getName());
 
     public Connection getConn() {
         return conn;
@@ -22,27 +24,15 @@ public class ParkingDao {
 
 
     public void insertParking(Parking parking) {
-
-        PreparedStatement pstmt = null;
-        try {
-
-            String sql = "INSERT INTO parkings(name,address,capacity) VALUES (?,?,?); " ;
-            pstmt = conn.prepareStatement(sql);
+        String sql = "INSERT INTO parkings(name,address,capacity) VALUES (?,?,?); " ;
+        try(PreparedStatement pstmt = conn.prepareStatement(sql);) {
             pstmt.setString(1, parking.getName());
             pstmt.setString(2, parking.getAddress());
             pstmt.setInt(3, parking.getCapacity());
             pstmt.executeUpdate();
-            pstmt.close();
 
         } catch (SQLException se) {
-            se.printStackTrace();
-        }  finally {
-            try {
-                if (pstmt != null) pstmt.close();
-
-            } catch (SQLException se2) {
-
-            }
+            LOGGER.log(Level.SEVERE, "Erreur lors de l'insertion du parking : " + parking.getName(), se);
         }
 
     }

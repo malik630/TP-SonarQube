@@ -5,31 +5,35 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import static com.example.dao.Scripts.SQLSCRIPT;
 
 public class DatabaseConnection {
 
+    private static final Logger LOGGER = Logger.getLogger(DatabaseConnection.class.getName());
     private String user;
     private String password;
-    private String jdbc_driver;
-    private String db_url;
+    private String jdbcDriver;
+    private String dbUrl;
 
 
-    public DatabaseConnection(String user, String password, String jdbc_driver, String db_url) {
+    public DatabaseConnection(String user, String password, String jdbcDriver, String dbUrl) {
         this.user = user;
         this.password = password;
-        this.jdbc_driver = jdbc_driver;
-        this.db_url = db_url;
+        this.jdbcDriver = jdbcDriver;
+        this.dbUrl = dbUrl;
     }
 
     public  Connection connect() {
         Connection conn = null;
         try {
-            conn = DriverManager.getConnection(db_url, user, password);
-            Class.forName(jdbc_driver);
+            conn = DriverManager.getConnection(dbUrl, user, password);
+            Class.forName(jdbcDriver);
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Erreur lors de la connexion à la base de données", e);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Driver JDBC introuvable", e);
         }
         return conn;
     }
@@ -38,25 +42,15 @@ public class DatabaseConnection {
         try {
             conn.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, "Erreur lors de la fermeture de la connexion", e);
         }
     }
 
     public void createDb(Connection conn) {
-        Statement stmt = null;
-        try {
-            stmt = conn.createStatement();
-            stmt.executeUpdate(Scripts.sql);
-            stmt.close();
+        try (Statement stmt = conn.createStatement()) {
+            stmt.executeUpdate(SQLSCRIPT);
         } catch(SQLException se) {
-            se.printStackTrace();
-        } catch(Exception e) {
-            e.printStackTrace();
-        } finally {
-            try{
-                if(stmt!=null) stmt.close();
-            } catch(SQLException se2) {
-            }
+            LOGGER.log(Level.SEVERE, "Erreur lors de la création de la base de données", se);
         }
     }
 

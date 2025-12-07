@@ -17,7 +17,7 @@ class TestReservationDao {
 
     static DatabaseConnection databaseConnection;
     static Connection connection;
-    static ReservationDao reservationDao ;
+    static ReservationDao reservationDao = new ReservationDao() ;
 
 
     @BeforeAll
@@ -36,7 +36,6 @@ class TestReservationDao {
     void testAddAndGet() throws ParseException {
         DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm");
         // insert Reservation
-         reservationDao = new ReservationDao();
         reservationDao.setConn(connection);
         Reservation reservation = new Reservation();
         ParkingPlace parkingPlace = new ParkingPlace();
@@ -66,18 +65,6 @@ class TestReservationDao {
         assertEquals("CONFIRMED",expectedReservation.getStatus().name());
     }
 
-
-/*
-    @Test
-    @Order(3)
-    void testRemove()  {
-        reservationDao.removeReservationById(1);
-        // get Reservation
-        Reservation expectedReservation = reservationDao.getReservationById(1);
-        assertNull(expectedReservation);
-
-    }
-*/
     @AfterAll
     public static void close() {
         databaseConnection.disconnect(connection);

@@ -22,7 +22,7 @@ public class PaymentDao {
 
 
     public void insertPayment(Payment payment) {
-
+        throw new UnsupportedOperationException();
     }
 
 
